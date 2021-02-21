@@ -1,0 +1,48 @@
+<html>
+  <head></head>
+  <body>
+
+    <div id="content">
+        <input type="text" id="waitSeconds" placeholder="10"><br>
+        <input type="text" id="message"  placeholder="some message"><br>
+        <input type="email" id="email"  placeholder="someone@gmail.com"><br>
+        <input type="text" id="phone"  placeholder="+0000000000"><br>
+        <button id="bothButton"  type="submit" onclick="sendData('both')">both</button><br>
+        <button id="emailButton" type="submit" onclick="sendData('email')">email</button><br>
+        <button id="smsButton" type="submit" onclick="sendData('sms')">sms</button>
+    </div>
+    <div id=successDiv></div>
+    <div id=resultsDiv></div>
+    <div id=errorDiv></div>
+
+    <script>
+        var API_ENDPOINT = 'https://xxxxxxx.execute-api.us-east-1.amazonaws.com/prod/reminders';
+
+        function sendData (pref) {
+            
+          var inputData = JSON.stringify({
+            waitSeconds: document.getElementById('waitSeconds').value,
+            preference : pref,
+            message: document.getElementById('message').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+          });
+
+          fetch(API_ENDPOINT, {
+            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            body: inputData
+          }).then((resp) => resp.json())
+          .then(function(data) {
+              console.log(data)
+              successDiv.textContent = 'Looks ok. But check the result below!';
+              resultsDiv.textContent = JSON.stringify(data);
+          })
+          .catch(function(err) {
+              errorDiv.textContent = 'Yikes! There was an error:\n' + err.toString();
+              console.log(err)
+          });
+        }
+    </script>
+  </body>
+</html>
